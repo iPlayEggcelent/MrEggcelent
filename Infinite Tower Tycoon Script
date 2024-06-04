@@ -1,0 +1,304 @@
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+
+local Window = OrionLib:MakeWindow({
+    Name = "Infinite Tower Tycoon HUB", 
+    HidePremium = false, 
+    SaveConfig = true, 
+    ConfigFolder = "OrionTest"
+})
+
+OrionLib:MakeNotification({
+    Name = "Opening!",
+    Content = "Loading in an Eggcelent HUB",
+    Image = "rbxassetid://4483345998",
+    Time = 5
+})
+
+-- Values
+local AutoCrate = false
+local AutoKey = false
+local AutoBuy = false
+local AutoShootZombies = false
+local AutoShootClones = false
+
+-- Functions
+
+-- AutoCrate:
+function autoCrateFunction()
+    while AutoCrate do
+        for _, crate in pairs(game:GetService("Workspace").CrateFolder:GetChildren()) do
+            if crate.Name ~= "wooden crate" then
+                wait(0.1)
+                firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, crate, 0)
+            end
+        end
+        wait(0.1) 
+    end
+end
+
+-- AutoKey:
+function autoKeyFunction()
+    while AutoKey do
+        for _, key in pairs(game:GetService("Workspace").KeyFolder:GetChildren()) do
+            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = key.CFrame
+            wait(0.1) 
+        end
+        wait(0.1)
+    end
+end
+
+
+-- AutoBuy
+function autoBuyFunction()
+    while AutoBuy do
+        local player = game.Players.LocalPlayer
+        local humanoidRootPart = player.Character.HumanoidRootPart
+        local allButtonsFolder = game:GetService("Workspace").AllButtons
+
+        for _, block in ipairs(allButtonsFolder:GetChildren()) do
+            if block:IsA("BasePart") then
+                humanoidRootPart.CFrame = block.CFrame
+                wait(0.1)
+            end
+        end
+        wait(0.1) 
+    end
+end
+
+-- AutoShootZombies
+function autoShootZombiesFunction()
+    while AutoShootZombies do
+        local folder = workspace:FindFirstChild("ZombieFolder")
+        if folder then
+            local parts = folder:GetChildren()
+            if #parts > 0 then
+                local part = parts[1]
+                local head = part:FindFirstChild("Head")
+                if head then
+                    local headPosition = head.Position
+                    local newCFrame = CFrame.new(headPosition)
+                    local args = {
+                        [1] = newCFrame,
+                        [2] = "Basic"
+                    }
+                    game:GetService("ReplicatedStorage"):WaitForChild("RemoteEvent"):WaitForChild("LocalFireEvent"):FireServer(unpack(args))
+                end
+            end
+        end
+        wait(0.00001)
+    end
+end
+
+-- AutoShootClones
+function autoShootClonesFunction()
+    while AutoShootClones do
+        local folder = workspace:FindFirstChild("CloneFolder")
+        if folder then
+            for _, clone in ipairs(folder:GetChildren()) do
+                if clone:IsA("Model") and clone:FindFirstChildOfClass("Humanoid") and clone:FindFirstChildOfClass("Humanoid").Health > 0 then
+                    local cloneHead = clone:FindFirstChild("Head")
+                    if cloneHead then
+                        local cloneHeadPosition = cloneHead.Position
+                        local cloneNewCFrame = CFrame.new(cloneHeadPosition)
+                        local cloneArgs = {
+                            [1] = cloneNewCFrame,
+                            [2] = "Basic"
+                        }
+                        game:GetService("ReplicatedStorage"):WaitForChild("RemoteEvent"):WaitForChild("LocalFireEvent"):FireServer(unpack(cloneArgs))
+                    end
+                end
+            end
+        end
+        wait(0.0001)
+    end
+end
+
+-- CFrames
+local CFrames = {
+    Middle = CFrame.new(40.0696754, 1.89049804, 5.39778662, 0.934343994, -2.2026958e-09, -0.356372356, -7.3902986e-09, 1, -2.55569113e-08, 0.356372356, 2.65126445e-08, 0.934343994),
+    Red = CFrame.new(38.2804337, 1.65549791, -221.529343, 0.981134653, 2.99304901e-08, -0.193325669, -2.67419829e-08, 1, 1.91025045e-08, 0.193325669, -1.35722162e-08, 0.981134653),
+    Green = CFrame.new(-147.613632, 1.44049788, -104.463959, 0.174271882, 3.71081903e-08, 0.98469758, 4.15725765e-08, 1, -4.50423769e-08, -0.98469758, 4.87860348e-08, 0.174271882),
+    Orange = CFrame.new(-148.360962, 1.44049788, 110.47908, 0.988337636, 1.01395059e-07, 0.152278379, -9.72281029e-08, 1, -3.48103768e-08, -0.152278379, 1.95986676e-08, 0.988337636),
+    Blue = CFrame.new(36.9509048, 1.65549791, 226.365936, -0.0495130084, 2.94550588e-08, -0.998773456, -7.08491967e-08, 1, 3.3003495e-08, 0.998773456, 7.23963964e-08, -0.0495130084),
+    Yellow = CFrame.new(229.867767, 1.44049788, 114.349129, 0.705574274, 9.00409169e-09, 0.708635986, 4.20081712e-08, 1, -5.45329009e-08, -0.708635986, 6.82455124e-08, 0.705574274),
+    Black = CFrame.new(232.621063, 1.65549791, -108.922371, 0.952752888, -6.96487268e-09, 0.303746462, 8.88219498e-10, 1, 2.01438368e-08, -0.303746462, -1.89223037e-08, 0.952752888)
+}
+
+
+-- [[[[[[[[[[[[[[[[[[[[GUI]]]]]]]]]]]]]]]]]]]]]
+
+
+-- Main GUI
+local AutoTab = Window:MakeTab({
+    Name = "Automations [💎]",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+
+local Section1 = AutoTab:AddSection({
+    Name = "Automatic stuffs ❄️"
+})
+
+-- Toggles
+AutoTab:AddToggle({
+    Name = "Auto Crate [📦]",
+    Default = false,
+    Callback = function(Value)
+        AutoCrate = Value
+        if AutoCrate then
+            spawn(autoCrateFunction)
+        end
+    end
+})
+
+AutoTab:AddToggle({
+    Name = "Auto Key [🔑]",
+    Default = false,
+    Callback = function(Value)
+        AutoKey = Value
+        if AutoKey then
+            spawn(autoKeyFunction)
+        end
+    end
+})
+
+AutoTab:AddToggle({
+    Name = "Auto Buy [🛠️]",
+    Default = false,
+    Callback = function(Value)
+        AutoBuy = Value
+        if AutoBuy then
+            spawn(autoBuyFunction)
+        end
+    end
+})
+
+-- Weapons Tab
+local WeaponsTab = Window:MakeTab({
+    Name = "Weapons [🤺]",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+
+local WeaponsSection = WeaponsTab:AddSection({
+    Name = "Some features may require you to equip a gun to function 🌟"
+})
+
+WeaponsTab:AddToggle({
+    Name = "Auto Shoot Zombies [🧟]",
+    Default = false,
+    Callback = function(Value)
+        AutoShootZombies = Value
+        if AutoShootZombies then
+            spawn(autoShootZombiesFunction)
+        end
+    end
+})
+
+WeaponsTab:AddToggle({
+    Name = "Auto Shoot Clones [🤖]",
+    Default = false,
+    Callback = function(Value)
+        AutoShootClones = Value
+        if AutoShootClones then
+            spawn(autoShootClonesFunction)
+        end
+    end
+})
+
+
+WeaponsTab:AddLabel("EQUIP GUN BEFORE YOU TOGGLE 🔫")
+
+-- Teleport Tab
+local TeleportTab = Window:MakeTab({
+    Name = "Teleport [🌀]",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+
+local TeleportSection = TeleportTab:AddSection({
+    Name = "Teleport to different areas of the map 🗺️"
+})
+
+local function teleportTo(cframe)
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = cframe
+end
+
+TeleportTab:AddButton({
+    Name = "Middle [⚪]",
+    Callback = function()
+        teleportTo(CFrames.Middle)
+    end    
+})
+
+TeleportTab:AddButton({
+    Name = "Red [🔴]",
+    Callback = function()
+        teleportTo(CFrames.Red)
+    end    
+})
+
+TeleportTab:AddButton({
+    Name = "Green [🟢]",
+    Callback = function()
+        teleportTo(CFrames.Green)
+    end    
+})
+
+TeleportTab:AddButton({
+    Name = "Orange [🟠]",
+    Callback = function()
+        teleportTo(CFrames.Orange)
+    end    
+})
+
+TeleportTab:AddButton({
+    Name = "Blue [🔵]",
+    Callback = function()
+        teleportTo(CFrames.Blue)
+    end    
+})
+
+TeleportTab:AddButton({
+    Name = "Yellow [🟡]",
+    Callback = function()
+        teleportTo(CFrames.Yellow)
+    end    
+})
+
+TeleportTab:AddButton({
+    Name = "Black [⚫]", 
+    Callback = function()
+        teleportTo(CFrames.Black)
+    end    
+})
+
+-- Esp Tab
+local EspTab = Window:MakeTab({
+    Name = "ESP [👁️]",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+
+local EspSection = WeaponsTab:AddSection({
+    Name = "Highlight Objects 💡"
+})
+
+EspTab:AddLabel("Nothin Here Yet 😬")
+
+-- Misc Tab
+
+local MiscTab = Window:MakeTab({
+    Name = "Misc [⚙️]",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+
+local MiscSection = WeaponsTab:AddSection({
+    Name = "Other non-related options for conveniency"
+})
+
+MiscTab:AddLabel("Made by iPlay")
+MiscTab:AddLabel("Thank You!!")
+
+OrionLib:Init()
