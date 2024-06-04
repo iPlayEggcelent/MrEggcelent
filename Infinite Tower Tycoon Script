@@ -124,6 +124,112 @@ local CFrames = {
     Black = CFrame.new(232.621063, 1.65549791, -108.922371, 0.952752888, -6.96487268e-09, 0.303746462, 8.88219498e-10, 1, 2.01438368e-08, -0.303746462, -1.89223037e-08, 0.952752888)
 }
 
+-- ESP Values
+local CrateESP = false
+local KeyESP = false
+local espFolder = Instance.new("Folder", game.CoreGui)
+espFolder.Name = "ESPFolder"
+
+-- ESP Functions
+
+-- Crate ESP:
+
+function createCrateESP(crate)
+    local box = Instance.new("BoxHandleAdornment")
+    box.Size = crate.Size
+    box.Color3 = getCrateColor(crate.Name)
+    box.Adornee = crate
+    box.AlwaysOnTop = true
+    box.ZIndex = 1
+    box.Transparency = 0.7
+    box.Parent = espFolder
+    
+    local label = Instance.new("BillboardGui", crate)
+    label.Adornee = crate
+    label.ExtentsOffset = Vector3.new(0, crate.Size.Y / 2 + 0.5, 0)
+    label.Size = UDim2.new(0, 100, 0, 50)
+    label.AlwaysOnTop = true
+    
+    local textLabel = Instance.new("TextLabel", label)
+    textLabel.Text = crate.Name
+    textLabel.Size = UDim2.new(1, 0, 1, 0)
+    textLabel.BackgroundTransparency = 1
+    textLabel.TextColor3 = box.Color3
+    textLabel.TextStrokeTransparency = 0
+end
+
+function getCrateColor(crateName)
+    local colors = {
+        ["wooden crate"] = Color3.fromRGB(139, 69, 19), -- Brown
+        ["stone crate"] = Color3.fromRGB(128, 128, 128), -- Gray
+        ["silver crate"] = Color3.fromRGB(192, 192, 192), -- Silver
+        ["golden crate"] = Color3.fromRGB(255, 215, 0), -- Gold
+        ["diamond crate"] = Color3.fromRGB(0, 255, 255) -- Cyan
+    }
+    return colors[crateName] or Color3.new(1, 1, 1)
+end
+
+function toggleCrateESP(enabled)
+    if enabled then
+        for _, crate in pairs(workspace.CrateFolder:GetChildren()) do
+            if crate:IsA("BasePart") then
+                createCrateESP(crate)
+            end
+        end
+    else
+        espFolder:ClearAllChildren()
+    end
+end
+
+-- Key ESP:
+
+function createKeyESP(key)
+    local dot = Instance.new("SphereHandleAdornment")
+    dot.Radius = 0.5
+    dot.Color3 = getKeyColor(key.Name)
+    dot.Adornee = key
+    dot.AlwaysOnTop = true
+    dot.ZIndex = 1
+    dot.Transparency = 0.7
+    dot.Parent = espFolder
+    
+    local label = Instance.new("BillboardGui", key)
+    label.Adornee = key
+    label.ExtentsOffset = Vector3.new(0, key.Size.Y / 2 + 0.5, 0)
+    label.Size = UDim2.new(0, 100, 0, 50)
+    label.AlwaysOnTop = true
+    
+    local textLabel = Instance.new("TextLabel", label)
+    textLabel.Text = key.Name
+    textLabel.Size = UDim2.new(1, 0, 1, 0)
+    textLabel.BackgroundTransparency = 1
+    textLabel.TextColor3 = dot.Color3
+    textLabel.TextStrokeTransparency = 0
+end
+
+function getKeyColor(keyName)
+    local colors = {
+        ["wooden key"] = Color3.fromRGB(139, 69, 19), -- Brown
+        ["stone key"] = Color3.fromRGB(128, 128, 128), -- Gray
+        ["silver key"] = Color3.fromRGB(192, 192, 192), -- Silver
+        ["golden key"] = Color3.fromRGB(255, 215, 0), -- Gold
+        ["diamond key"] = Color3.fromRGB(0, 255, 255) -- Cyan
+    }
+    return colors[keyName] or Color3.new(1, 1, 1)
+end
+
+function toggleKeyESP(enabled)
+    if enabled then
+        for _, key in pairs(workspace.KeyFolder:GetChildren()) do
+            if key:IsA("BasePart") then
+                createKeyESP(key)
+            end
+        end
+    else
+        espFolder:ClearAllChildren()
+    end
+end
+
 
 -- [[[[[[[[[[[[[[[[[[[[GUI]]]]]]]]]]]]]]]]]]]]]
 
@@ -280,11 +386,27 @@ local EspTab = Window:MakeTab({
     PremiumOnly = false
 })
 
-local EspSection = WeaponsTab:AddSection({
+local EspSection = EspTab:AddSection({
     Name = "Highlight Objects 💡"
 })
 
-EspTab:AddLabel("Nothin Here Yet 😬")
+ESPTab:AddToggle({
+    Name = "Crate ESP [🧭]",
+    Default = false,
+    Callback = function(Value)
+        CrateESP = Value
+        toggleCrateESP(CrateESP)
+    end
+})
+
+ESPTab:AddToggle({
+    Name = "Key ESP [🔐]",
+    Default = false,
+    Callback = function(Value)
+        KeyESP = Value
+        toggleKeyESP(KeyESP)
+    end
+})
 
 -- Misc Tab
 
@@ -294,7 +416,7 @@ local MiscTab = Window:MakeTab({
     PremiumOnly = false
 })
 
-local MiscSection = WeaponsTab:AddSection({
+local MiscSection = MiscTab:AddSection({
     Name = "Other non-related options for conveniency"
 })
 
